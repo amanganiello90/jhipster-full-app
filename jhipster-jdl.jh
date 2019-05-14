@@ -1,0 +1,163 @@
+entity User {
+	username String unique required,
+    email String unique required,
+    password String required,
+    name String required,
+    surname String required,
+    address String required,
+    borndate LocalDate required,
+    CF String unique required,
+    autority String required,
+}
+
+entity Degree {
+	name String unique required,
+    description String
+}
+
+// an ignored comment
+/** not an ignored comment */
+entity SingleCourse {
+	name String unique required,
+	description String,
+	idteacher Integer required,
+	isfordegree Boolean required,
+    cfu Integer
+}
+
+entity ExamAppeal{
+	idsinglecourse Integer required,
+    date Instant required,
+    place String required,
+    description String required
+    
+}
+
+entity StudentExam{
+	idstudent Integer required,
+    idsinglecourse Integer required,
+    mark Integer,
+    attainmentdate LocalDate
+    
+}
+
+entity CourseNews {
+	idsinglecourse Integer required,
+	description String required
+}
+
+entity CourseMaterial {
+	idsinglecourse Integer required,
+	video Blob,
+    document Blob required
+}
+
+entity PostMessage {
+	idsender Integer required,
+	description String required
+    idreceiver Integer required,
+    issent Boolean required,
+}
+
+entity Matriculation {
+	idstudent Integer required,
+	iddegree Integer, 
+    idsinglecourse Integer, 
+    matriculationdate LocalDate required,
+    matriculationyear Integer required,
+    document Blob required
+    state Boolean required,
+}
+
+entity Payment {
+	idmatriculation Integer required,
+    state Boolean required,
+	amount Integer required
+    description String required,
+    note String 
+}
+
+/**
+ * The Employee entity.
+ */
+entity Employee {
+	/**
+	* The firstname attribute.
+	*/
+	firstName String,
+	lastName String,
+	email String,
+	phoneNumber String,
+	hireDate Instant,
+	salary Long,
+	commissionPct Long
+}
+
+entity Job {
+	jobTitle String,
+	minSalary Long,
+	maxSalary Long
+}
+
+entity JobHistory {
+	startDate Instant,
+	endDate Instant,
+	language Language
+}
+
+enum Language {
+    FRENCH, ENGLISH, SPANISH
+}
+
+relationship OneToOne {
+	Country{region} to Region
+}
+
+relationship OneToOne {
+	Location{country} to Country
+}
+
+relationship OneToOne {
+	Department{location} to Location
+}
+
+relationship ManyToMany {
+	Job{task(title)} to Task{job}
+}
+
+// defining multiple OneToMany relationships with comments
+relationship OneToMany {
+	Employee{job} to Job,
+	/**
+	* A relationship
+	*/
+	Department{employee} to
+	/**
+	* Another side of the same relationship
+	*/
+	Employee
+}
+
+relationship ManyToOne {
+	Employee{manager} to Employee
+}
+
+// defining multiple oneToOne relationships
+relationship OneToOne {
+	JobHistory{job} to Job,
+	JobHistory{department} to Department,
+	JobHistory{employee} to Employee
+}
+
+// Set pagination options
+paginate JobHistory, Employee with infinite-scroll
+paginate Job with pagination
+
+// Use Data Transfert Objects (DTO)
+// dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl except Employee, Job
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
