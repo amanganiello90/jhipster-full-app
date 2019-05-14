@@ -1,14 +1,13 @@
+
 /*
  * This is the application and entity model for university elearning
-
+*/
 application {
   config {
-    jhipsterVersion 6.0.1,
     applicationType monolith,
-    baseName DemetraElearning
+    baseName DemetraElearning,
     packageName com.amanganiello90.demetra,
-    packageFolder com/amanganiello90/demetra,
-    serverPort 8080
+    serverPort 8080,
     cacheProvider no,
     websocket false,
     authenticationType session,
@@ -21,13 +20,11 @@ application {
     testFrameworks [cucumber],
     enableSwaggerCodegen false,
     clientFramework angularX,
-    clientTheme cosmo,
-    clientThemeVariant primary,
     clientPackageManager yarn,
     useSass true,
-    skipUserManagement false
-    jhiPrefix: jhi,
-    dtoSuffix: DTO,
+    skipUserManagement false,
+    jhiPrefix jhi,
+    dtoSuffix DTO,
     enableTranslation true,
     nativeLanguage it,
     languages [it, en]
@@ -36,10 +33,11 @@ application {
 }
 
 // JDL definition for application generated with command 'jhipster export-jdl'
-entity DemetraUser {
-    firstName String required
-    lastName String required
-    gender Gender required
+
+entity DemetraUser{
+    firstName String required,
+    lastName String required,
+    gender Gender required,
     email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/),
     address String required,
     borndate LocalDate required,
@@ -47,11 +45,15 @@ entity DemetraUser {
     autority MyAutority required
 }
 
-enum MyAutority {
+enum Gender{
+    MALE, FEMALE
+}
+
+enum MyAutority{
     ADMIN, STUDENT, TEACHER
 }
 
-entity Degree {
+entity Degree{
 	name String unique required,
     description String
 }
@@ -78,30 +80,30 @@ entity StudentExam{
     
 }
 
-entity CourseNews {
+entity CourseNews{
 	description String required
 }
 
-entity CourseMaterial {
+entity CourseMaterial{
     video Blob,
     document Blob required
 }
 
-entity PostMessage {
+entity PostMessage{
     description String required
     issent Boolean required,
 }
 
-entity Matriculation {
+entity Matriculation{
     matriculationdate LocalDate required,
     matriculationyear Integer required,
     document Blob required
     state Boolean required,
 }
 
-entity Payment {
+entity Payment{
     state Boolean required,
-	amount Integer required
+	amount Integer required,
     description String required,
     note String 
 }
@@ -111,7 +113,7 @@ relationship ManyToMany {
 }
 
 relationship OneToOne {
-	DemetraUser{user} to User{login} with jpaDerivedIdentifier
+	DemetraUser{user(login)} to User with jpaDerivedIdentifier
 }
 
 
