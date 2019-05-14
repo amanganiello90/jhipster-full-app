@@ -1,4 +1,46 @@
+/*
+ * This is the application and entity model for university elearning
+
+application {
+  config {
+    jhipsterVersion 6.0.1,
+    applicationType monolith,
+    baseName DemetraElearning
+    packageName com.amanganiello90.demetra,
+    packageFolder com/amanganiello90/demetra,
+    serverPort 8080
+    cacheProvider no,
+    websocket false,
+    authenticationType session,
+    devDatabaseType h2Memory,
+    prodDatabaseType mssql,
+    buildTool maven,
+    searchEngine false,
+    messageBroker false,
+    serviceDiscoveryType false,
+    testFrameworks [cucumber],
+    enableSwaggerCodegen false,
+    clientFramework angularX,
+    clientTheme cosmo,
+    clientThemeVariant primary,
+    clientPackageManager yarn,
+    useSass true,
+    skipUserManagement false
+    jhiPrefix: jhi,
+    dtoSuffix: DTO,
+    enableTranslation true,
+    nativeLanguage it,
+    languages [it, en]
+  }
+  entities *
+}
+
+// JDL definition for application generated with command 'jhipster export-jdl'
 entity DemetraUser {
+    firstName String required
+    lastName String required
+    gender Gender required
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/),
     address String required,
     borndate LocalDate required,
     CF String unique required,
@@ -65,30 +107,30 @@ entity Payment {
 }
 
 relationship ManyToMany {
-	Degree to SingleCourse
+	Degree{singlecourse} to SingleCourse{degree}
 }
 
 relationship OneToOne {
-	DemetraUser{user(id) required} to User{id}
+	DemetraUser{user} to User{login} with jpaDerivedIdentifier
 }
 
 
 relationship OneToMany {
-    DemetraUser to SingleCourse{idteacher required},
-    DemetraUser{postsent(id)} to PostMessage{idsender required},
-    DemetraUser{postreceived(id)} to PostMessage{idreceiver required},
-    DemetraUser to Matriculation{idstudent required},
-    DemetraUser to StudentExam{idstudent required},
+    DemetraUser{singlecourse} to SingleCourse{idteacher required},
+    DemetraUser{postsent} to PostMessage{idsender required},
+    DemetraUser{postreceived} to PostMessage{idreceiver required},
+    DemetraUser{matriculation} to Matriculation{idstudent required},
+    DemetraUser{studentexam} to StudentExam{idstudent required},
     
-    SingleCourse to CourseNews{idsinglecourse required},
-    SingleCourse to CourseMaterial{idsinglecourse required},
-    SingleCourse to ExamAppeal{idsinglecourse required},
-    SingleCourse to Matriculation{idsinglecourse},
-    SingleCourse to StudentExam{idsinglecourse required},
+    SingleCourse{coursenews} to CourseNews{idsinglecourse required},
+    SingleCourse{coursematerial} to CourseMaterial{idsinglecourse required},
+    SingleCourse{examappeal} to ExamAppeal{idsinglecourse required},
+    SingleCourse{matriculation} to Matriculation{idsinglecourse},
+    SingleCourse{studentexam} to StudentExam{idsinglecourse required},
     
-    Degree to Matriculation{iddegree required},
+    Degree{matriculation} to Matriculation{iddegree required},
     
-    Matriculation to Payment{idmatriculation required}
+    Matriculation{payment} to Payment{idmatriculation required}
 }
 
 
@@ -105,3 +147,4 @@ service all with serviceImpl
 
 // Set an angular suffix
 // angularSuffix * with mySuffix
+filter *
