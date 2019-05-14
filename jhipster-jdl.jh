@@ -86,14 +86,14 @@ relationship OneToOne {
 
 
 relationship OneToMany {
-	DemetraUser to SingleCourse{idteacher},
-    DemetraUser to PostMessage{idsender},
-    DemetraUser to PostMessage{idreceiver},
+    DemetraUser to SingleCourse{idteacher},
+    DemetraUser{postsent(id)} to PostMessage{idsender},
+    DemetraUser{postreceived(id)} to PostMessage{idreceiver},
     DemetraUser to Matriculation{idstudent},
     DemetraUser to StudentExam{idstudent},
     
     SingleCourse to CourseNews{idsinglecourse},
-	SingleCourse to CourseMaterial{idsinglecourse},
+    SingleCourse to CourseMaterial{idsinglecourse},
     SingleCourse to ExamAppeal{idsinglecourse},
     SingleCourse to Matriculation{idsinglecourse},
     SingleCourse to StudentExam{idsinglecourse},
