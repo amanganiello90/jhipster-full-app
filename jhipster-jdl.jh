@@ -1,13 +1,12 @@
-entity User {
-	username String unique required,
-    email String unique required,
-    password String required,
-    name String required,
-    surname String required,
+entity DemetraUser {
     address String required,
     borndate LocalDate required,
     CF String unique required,
-    autority String required,
+    autority MyAutority required
+}
+
+enum MyAutority {
+    ADMIN, STUDENT, TEACHER
 }
 
 entity Degree {
@@ -77,87 +76,44 @@ entity Payment {
     note String 
 }
 
-/**
- * The Employee entity.
- */
-entity Employee {
-	/**
-	* The firstname attribute.
-	*/
-	firstName String,
-	lastName String,
-	email String,
-	phoneNumber String,
-	hireDate Instant,
-	salary Long,
-	commissionPct Long
-}
-
-entity Job {
-	jobTitle String,
-	minSalary Long,
-	maxSalary Long
-}
-
-entity JobHistory {
-	startDate Instant,
-	endDate Instant,
-	language Language
-}
-
-enum Language {
-    FRENCH, ENGLISH, SPANISH
-}
-
-relationship OneToOne {
-	Country{region} to Region
-}
-
-relationship OneToOne {
-	Location{country} to Country
-}
-
-relationship OneToOne {
-	Department{location} to Location
-}
-
 relationship ManyToMany {
-	Job{task(title)} to Task{job}
+	Degree to SingleCourse
 }
 
-// defining multiple OneToMany relationships with comments
-relationship OneToMany {
-	Employee{job} to Job,
-	/**
-	* A relationship
-	*/
-	Department{employee} to
-	/**
-	* Another side of the same relationship
-	*/
-	Employee
-}
-
-relationship ManyToOne {
-	Employee{manager} to Employee
-}
-
-// defining multiple oneToOne relationships
 relationship OneToOne {
-	JobHistory{job} to Job,
-	JobHistory{department} to Department,
-	JobHistory{employee} to Employee
+	DemetraUser to User
 }
+
+
+relationship OneToMany {
+	DemetraUser to SingleCourse{idteacher},
+    DemetraUser to PostMessage{idsender},
+    DemetraUser to PostMessage{idreceiver},
+    DemetraUser to Matriculation{idstudent},
+    DemetraUser to StudentExam{idstudent},
+    
+    SingleCourse to CourseNews{idsinglecourse},
+	SingleCourse to CourseMaterial{idsinglecourse},
+    SingleCourse to ExamAppeal{idsinglecourse},
+    SingleCourse to Matriculation{idsinglecourse},
+    SingleCourse to StudentExam{idsinglecourse},
+    
+    Degree to Matriculation{iddegree},
+    
+    Matriculation to Payment{idmatriculation}
+}
+
+
 
 // Set pagination options
-paginate JobHistory, Employee with infinite-scroll
-paginate Job with pagination
+// paginate PostMessage with infinite-scroll
+paginate all with pagination
 
 // Use Data Transfert Objects (DTO)
-// dto * with mapstruct
+dto * with mapstruct
 
 // Set service options to all except few
-service all with serviceImpl except Employee, Job
+service all with serviceImpl
 
 // Set an angular suffix
 // angularSuffix * with mySuffix
