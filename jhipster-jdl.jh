@@ -1,117 +1,115 @@
 
 /*
  * This is the application and entity model for university elearning
-*/
+ * default values: https://www.jhipster.tech/jdl/#annexes
+ * Use jhipster import-jdl <this-file> to generate the entire application
+ * Use jhipster 6.x (example 6.0.1)
+ */
+
 application {
-  config {
-    applicationType monolith,
-    baseName DemetraElearning,
-    packageName com.amanganiello90.demetra,
-    serverPort 8080,
-    cacheProvider no,
-    enableHibernateCache false,
-    websocket false,
-    authenticationType session,
-    devDatabaseType h2Memory,
-    prodDatabaseType mssql,
-    buildTool maven,
-    searchEngine false,
-    messageBroker false,
-    serviceDiscoveryType false,
-    testFrameworks [cucumber],
-    enableSwaggerCodegen false,
-    clientFramework angularX,
-    clientPackageManager yarn,
-    useSass true,
-    skipUserManagement false,
-    jhiPrefix jhi,
-    dtoSuffix DTO,
-    enableTranslation true,
-    nativeLanguage it,
-    languages [it, en]
-  }
-  entities *
+	config {
+		applicationType monolith,
+		baseName DemetraElearning,
+		packageName com.amanganiello.demetra,
+		serverPort 8081,
+		cacheProvider no,
+		enableHibernateCache false,
+		authenticationType session,
+		devDatabaseType h2Memory,
+		prodDatabaseType mssql,
+		buildTool maven,
+		serviceDiscoveryType false,
+		testFrameworks[cucumber],
+		clientPackageManager yarn,
+		useSass true,
+		skipUserManagement false,
+		nativeLanguage it,
+		languages[it, en]
+	}
+	entities *
 }
 
-// JDL definition for application generated with command 'jhipster export-jdl'
+// JDL definition entity for application
 
-entity DemetraUser{
-    firstName String required,
-    lastName String required,
-    gender Gender required,
-    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/),
-    address String required,
-    borndate LocalDate required,
-    CF String unique required,
-    autority MyAutority required
+entity DemetraUser {
+	gender Gender required,
+	address String required,
+	borndate LocalDate required,
+        cf String required unique,
+	usertype UserType required
 }
 
-enum Gender{
-    MALE, FEMALE
+enum Gender {
+	MALE,
+	FEMALE
 }
 
-enum MyAutority{
-    ADMIN, STUDENT, TEACHER
+enum UserType {
+	STUDENT,
+	TEACHER
 }
 
-entity Degree{
-	name String unique required,
-    description String
+entity Degree {
+	name String required unique,
+	description String
 }
 
-// an ignored comment
-/** not an ignored comment */
 entity SingleCourse {
-	name String unique required,
+	title String required unique,
 	description String,
 	isfordegree Boolean required,
-    cfu Integer
+	cfu Integer
 }
 
-entity ExamAppeal{
-    date Instant required,
-    place String required,
-    description String required
-    
+entity ExamAppeal {
+	date Instant required,
+	place String required,
+	description String required
+
 }
 
-entity StudentExam{
-    mark Integer,
-    attainmentdate LocalDate
-    
+entity StudentExam {
+	mark Integer,
+	attainmentdate LocalDate
+
 }
 
-entity CourseNews{
+entity CourseNews {
 	description String required
 }
 
-entity CourseMaterial{
-    video Blob,
-    document Blob required
+entity CourseMaterial {
+	video Blob,
+	document Blob required
 }
 
-entity PostMessage{
-    description String required
-    issent Boolean required,
+entity PostMessage {
+	description String required,
+	issent Boolean required
 }
 
-entity Matriculation{
-    matriculationdate LocalDate required,
-    matriculationyear Integer required,
-    document Blob required
-    state Boolean required,
+entity Matriculation {
+	matriculationdate LocalDate required,
+	matriculationyear Integer required,
+	document Blob required,
+	state Boolean required
 }
 
-entity Payment{
-    state Boolean required,
+entity Payment {
+	state Boolean required,
 	amount Integer required,
-    description String required,
-    note String 
+	description String required,
+	note String
 }
 
+// relationship info: https://www.jhipster.tech/managing-relationships/
+
+/*
+// it is splitted in two oneToMany in order to generate fields on UI
 relationship ManyToMany {
-	Degree{singlecourse} to SingleCourse{degree}
+	Degree{coursetitle(title)} to SingleCourse{degreename(name)}
 }
+ */
 
 relationship OneToOne {
 	DemetraUser{user(login)} to User with jpaDerivedIdentifier
@@ -119,24 +117,26 @@ relationship OneToOne {
 
 
 relationship OneToMany {
-    DemetraUser{singlecourse} to SingleCourse{idteacher required},
-    DemetraUser{postsent} to PostMessage{idsender required},
-    DemetraUser{postreceived} to PostMessage{idreceiver required},
-    DemetraUser{matriculation} to Matriculation{idstudent required},
-    DemetraUser{studentexam} to StudentExam{idstudent required},
+    Degree{singlecourse} to SingleCourse{degreename(name)}
+
+    SingleCourse{degree} to Degree{coursetitle(title)}
+
+    DemetraUser{singlecourse} to SingleCourse{cfteacher(cf)},
+    DemetraUser{postsent} to PostMessage{cfsender(cf)},
+    DemetraUser{postreceived} to PostMessage{cfreceiver(cf)},
+    DemetraUser{matriculation} to Matriculation{cfstudent(cf)},
+    DemetraUser{studentexam} to StudentExam{cfstudent(cf)},
     
-    SingleCourse{coursenews} to CourseNews{idsinglecourse required},
-    SingleCourse{coursematerial} to CourseMaterial{idsinglecourse required},
-    SingleCourse{examappeal} to ExamAppeal{idsinglecourse required},
-    SingleCourse{matriculation} to Matriculation{idsinglecourse},
-    SingleCourse{studentexam} to StudentExam{idsinglecourse required},
+    SingleCourse{coursenews} to CourseNews{coursetitle(title)},
+    SingleCourse{coursematerial} to CourseMaterial{coursetitle(title)},
+    SingleCourse{examappeal} to ExamAppeal{coursetitle(title)},
+    SingleCourse{matriculation} to Matriculation{coursetitle(title)},
+    SingleCourse{studentexam} to StudentExam{coursetitle(title)},
     
-    Degree{matriculation} to Matriculation{iddegree required},
+    Degree{matriculation} to Matriculation{degreename(name)},
     
-    Matriculation{payment} to Payment{idmatriculation required}
+    Matriculation{payment} to Payment{idmatriculation}
 }
-
-
 
 // Set pagination options
 // paginate PostMessage with infinite-scroll
