@@ -57,7 +57,7 @@ entity Degree {
 entity SingleCourse {
 	title String required unique,
 	description String,
-	isfordegree Boolean required,
+	isnotonlyfordegree Boolean required,
 	cfu Integer
 }
 
@@ -104,12 +104,12 @@ entity Payment {
 
 // relationship info: https://www.jhipster.tech/managing-relationships/
 
-/*
-// it is splitted in two oneToMany in order to generate fields on UI
+
 relationship ManyToMany {
-	Degree{coursetitle(title)} to SingleCourse{degreename(name)}
+               // required does not work
+	Degree{coursetitle(title)} to SingleCourse{degreename(name)},
+	DemetraUser{singlecoursestudent} to SingleCourse{cfstudent(cf)},
 }
- */
 
 relationship OneToOne {
 	DemetraUser{user(login)} to User with jpaDerivedIdentifier
@@ -117,25 +117,23 @@ relationship OneToOne {
 
 
 relationship OneToMany {
-    Degree{singlecourse} to SingleCourse{degreename(name)}
-
-    SingleCourse{degree} to Degree{coursetitle(title)}
-
-    DemetraUser{singlecourse} to SingleCourse{cfteacher(cf)},
+    // required on DemetraUser does not work
+    DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf)},
     DemetraUser{postsent} to PostMessage{cfsender(cf)},
     DemetraUser{postreceived} to PostMessage{cfreceiver(cf)},
     DemetraUser{matriculation} to Matriculation{cfstudent(cf)},
     DemetraUser{studentexam} to StudentExam{cfstudent(cf)},
     
-    SingleCourse{coursenews} to CourseNews{coursetitle(title)},
-    SingleCourse{coursematerial} to CourseMaterial{coursetitle(title)},
-    SingleCourse{examappeal} to ExamAppeal{coursetitle(title)},
-    SingleCourse{matriculation} to Matriculation{coursetitle(title)},
-    SingleCourse{studentexam} to StudentExam{coursetitle(title)},
+    SingleCourse{coursenews} to CourseNews{coursetitle(title) required},
+    SingleCourse{coursematerial} to CourseMaterial{coursetitle(title) required},
+    SingleCourse{examappeal} to ExamAppeal{coursetitle(title) required},
+    SingleCourse{matriculation} to Matriculation{coursetitle(title) required},
+    SingleCourse{studentexam} to StudentExam{coursetitle(title) required},
     
+    					// not required 
     Degree{matriculation} to Matriculation{degreename(name)},
     
-    Matriculation{payment} to Payment{idmatriculation}
+    Matriculation{payment} to Payment{idmatriculation required}
 }
 
 // Set pagination options
