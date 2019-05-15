@@ -106,23 +106,24 @@ entity Payment {
 
 
 relationship ManyToMany {
-               // required does not work
+           
 	Degree{coursetitle(title)} to SingleCourse{degreename(name)},
-	DemetraUser{singlecoursestudent} to SingleCourse{cfstudent(cf)},
+	DemetraUser{coursetitle(title)} to SingleCourse{cfstudent(cf)},
 }
 
 relationship OneToOne {
-	DemetraUser{user(login)} to User with jpaDerivedIdentifier
+ // required on DemetraUser does not work
+	DemetraUser{user(login)} to User
 }
 
 
 relationship OneToMany {
-    // required on DemetraUser does not work
-    DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf)},
-    DemetraUser{postsent} to PostMessage{cfsender(cf)},
-    DemetraUser{postreceived} to PostMessage{cfreceiver(cf)},
-    DemetraUser{matriculation} to Matriculation{cfstudent(cf)},
-    DemetraUser{studentexam} to StudentExam{cfstudent(cf)},
+   
+    DemetraUser{singlecourseteacher} to SingleCourse{cfteacher(cf) required},
+    DemetraUser{postsent} to PostMessage{cfsender(cf) required},
+    DemetraUser{postreceived} to PostMessage{cfreceiver(cf) required},
+    DemetraUser{matriculation} to Matriculation{cfstudent(cf) required},
+    DemetraUser{studentexam} to StudentExam{cfstudent(cf) required},
     
     SingleCourse{coursenews} to CourseNews{coursetitle(title) required},
     SingleCourse{coursematerial} to CourseMaterial{coursetitle(title) required},
@@ -130,7 +131,6 @@ relationship OneToMany {
     SingleCourse{matriculation} to Matriculation{coursetitle(title) required},
     SingleCourse{studentexam} to StudentExam{coursetitle(title) required},
     
-    					// not required 
     Degree{matriculation} to Matriculation{degreename(name)},
     
     Matriculation{payment} to Payment{idmatriculation required}
